@@ -35,5 +35,8 @@ reports/
 # venv
 .venv
 
-# archivos que uso para probar localmente cosas
+# files I use to test locally
 pruebas.ipynb
+
+# dumps
+*.sav
