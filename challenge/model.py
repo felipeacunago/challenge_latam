@@ -51,9 +51,11 @@ class DelayModel:
             or
             pd.DataFrame: features.
         """
-        threshold_in_minutes = 15
-        data['min_diff'] = data.apply(self.get_min_diff, axis = 1)
-        data['delay'] = np.where(data['min_diff'] > threshold_in_minutes, 1, 0)
+
+        if 'Fecha-O' in data.columns and 'Fecha-I' in data.columns:
+            threshold_in_minutes = 15
+            data['min_diff'] = data.apply(self.get_min_diff, axis = 1)
+            data['delay'] = np.where(data['min_diff'] > threshold_in_minutes, 1, 0)
 
 
         features = pd.concat([
@@ -62,6 +64,13 @@ class DelayModel:
             pd.get_dummies(data['MES'], prefix = 'MES')], 
             axis = 1
         )
+        
+        # fill missing columns
+        missing_columns = list(set(top_10_features).difference(features.columns))
+        if len(missing_columns)>0:
+            features[missing_columns] = 0
+
+        # keep only features from the top 10
         features = features[top_10_features]
 
         if target_column:
@@ -88,6 +97,7 @@ class DelayModel:
         n_y1 = len(target[target['delay'] == 1])
 
         self._model = LogisticRegression(class_weight={1: n_y0/len(target), 0: n_y1/len(target)})
+
         # pd.DataFrame -> 1d array to avoid the warning
         self._model.fit(features, target.values.ravel())
         joblib.dump(self._model, 'model.sav')
