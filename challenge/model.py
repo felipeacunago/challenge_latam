@@ -25,9 +25,17 @@ class DelayModel:
     def __init__(
         self
     ):
-        self._model = None # Model should be saved in this attribute.
+        # Model is loaded if the file model.sav exists
+        # if the loading fails (any exception: FileNotFound, etc) the model is set to None 
+        try:
+            self._model = joblib.load('model.sav')
+        except:
+            self._model = None
         
-    def get_min_diff(self, data):
+    def get_min_diff(
+            self, 
+            data: pd.DataFrame
+        ) -> float:
         fecha_o = datetime.strptime(data['Fecha-O'], '%Y-%m-%d %H:%M:%S')
         fecha_i = datetime.strptime(data['Fecha-I'], '%Y-%m-%d %H:%M:%S')
         min_diff = ((fecha_o - fecha_i).total_seconds())/60
@@ -117,7 +125,6 @@ class DelayModel:
         Returns:
             (List[int]): predicted targets.
         """
-        self._model = joblib.load('model.sav')
         y_hat = self._model.predict(features) # numpy array
 
         return y_hat.tolist() # list of ints

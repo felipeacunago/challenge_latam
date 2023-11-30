@@ -13,6 +13,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.encoders import jsonable_encoder
 
 app = fastapi.FastAPI()
+model = DelayModel()
 
 # Flight type
 class Flight(BaseModel):
@@ -45,6 +46,5 @@ async def get_health() -> dict:
 
 @app.post("/predict", status_code=200)
 async def post_predict(payload : RequestBody) -> dict:
-    model = DelayModel()
     preprocessed_data = model.preprocess(pd.DataFrame(payload.dict()['flights']))
     return {"predict": model.predict(preprocessed_data)}
