@@ -2,7 +2,11 @@ name: 'Continuous Integration'
 
 on:
   push:
+      - develop
+      - 'feature/**'
   pull_request:
+      - develop
+      - 'feature/**'
 
 permissions:
   contents: read
