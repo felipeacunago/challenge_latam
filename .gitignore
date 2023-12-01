@@ -37,6 +37,3 @@ reports/
 
 # files I use to test locally
 pruebas.ipynb
-
-# dumps
-*.sav
